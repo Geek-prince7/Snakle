@@ -4,56 +4,67 @@ import time
 
 
 class Snake:
-    def __int__(self, parent_screen):
+    def __init__(self, parent_screen):
         self.surface = parent_screen
-        # load image
         self.block = pygame.image.load("Resouce/block.jpg").convert()
-        # add block img on game screen
-        self.y_cord = 100
-        self.x_cord = 100
+        self.x = 100
+        self.y = 100
+        self.direction='up'
 
     def draw(self):
         self.surface.fill((110, 110, 5))
-        self.surface.blit(self.block, (self.x_cord, self.y_cord))
+        self.surface.blit(self.block, (self.x, self.y))
         pygame.display.flip()
 
     def move_up(self):
-        self.y_cord -= 10
-        self.draw()
+        self.direction='up'
 
     def move_down(self):
-        self.y_cord += 10
-        self.draw()
+        self.direction='down'
+
 
     def move_right(self):
-        self.x_cord += 10
-        self.draw()
+        self.direction='right'
+
 
     def move_left(self):
-        self.x_cord -= 10
+       self.direction='left'
+
+
+    def walk(self):
+        if self.direction=='up':
+            self.y-=10
+        elif self.direction == 'down':
+            self.y+=10
+        elif self.direction == 'right':
+            self.x+=10
+        elif self.direction == 'left':
+            self.x-=10
         self.draw()
+
 
 
 class Game:
     # constructor
-    def __int__(self):
+    def __init__(self):
         pygame.init()
-        self.surface = pygame.display.set_mode((1000, 700))
-        # set background color
-        self.surface.fill((110, 110, 5))
+        self.surface = pygame.display.set_mode((500, 500))
         self.snake = Snake(self.surface)
         self.snake.draw()
 
     def run(self):
-        # event loop
         running = True
-        # to hold game screen
+
         while running:
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
-                    # using escape key i will quit game window
                     if event.key == K_ESCAPE:
                         running = False
+                    if event.key == K_LEFT:
+                        self.snake.move_left()
+
+                    if event.key == K_RIGHT:
+                        self.snake.move_right()
 
                     if event.key == K_UP:
                         self.snake.move_up()
@@ -61,18 +72,15 @@ class Game:
                     if event.key == K_DOWN:
                         self.snake.move_down()
 
-                    if event.key == K_LEFT:
-                        self.snake.move_left()
-
-                    if event.key == K_RIGHT:
-                        self.snake.move_right()
-                # byclicking on x button it will close otherwise it wont close
                 elif event.type == QUIT:
                     running = False
 
-if __name__ =="__main__":
-    game=Game()
-    game.run()
+            self.snake.walk()
+            time.sleep(0.3)
 
+
+if __name__ == '__main__':
+    game = Game()
+    game.run()
 
 
