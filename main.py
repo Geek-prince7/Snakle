@@ -17,7 +17,7 @@ class Apple:
 
     def move(self):
         self.x = random.randint(1,25)*40
-        self.y = random.randint(1,17)*40
+        self.y = random.randint(1,16)*40
 
     def return_apple_pos(self):
         return self.x , self.y
@@ -39,10 +39,8 @@ class Snake:
         newl = int(len1)
         if (self.len < newl):
             self.len = newl
-            newl = newl - len(self.x)
-            for i in range(newl):
-                self.x.append(self.x[0])
-                self.y.append(self.y[0])
+            self.x.append(self.x[0])
+            self.y.append(self.y[0])
 
         for i in range(self.len):
             self.surface.blit(self.block, (self.x[i], self.y[i]))
@@ -93,10 +91,37 @@ class Game:
     def play(self):
         self.snake.walk()
         self.apple.draw()
+        self.collision()
+        self.score()
+        self.game_over()
+
 
     def size_change(self):
         self.length += 1
         self.snake.draw(self.length)
+
+
+
+    def collision(self):
+        if self.apple.return_apple_pos() == self.snake.return_snake_pos():
+            self.apple.move()
+            self.size_change()
+
+    def game_over(self):
+        for i in range(3,self.snake.len):
+            x1=self.snake.x[0]
+            y1=self.snake.y[0]
+            x2=self.snake.x[i]
+            y2=self.snake.y[i]
+            if x1 >= x2 and x1 < x2 + 40:
+                if y1 >= y2 and y1 < y2 + 40:
+                    print('go')
+
+    def score(self):
+        font=pygame.font.SysFont('arial',30)
+        scores=font.render(f"score : {self.snake.len*40 }",True,(255, 255, 255))
+        self.surface.blit(scores,(1000,10))
+        pygame.display.flip()
 
     def run(self):
         running = True
@@ -117,17 +142,10 @@ class Game:
 
                     if event.key == K_DOWN:
                         self.snake.move_down()
-                    if event.key == K_1:
-                        self.size_change()
-
 
                 elif event.type == QUIT:
                     running = False
-
             self.play()
-            if self.apple.return_apple_pos()==self.snake.return_snake_pos():
-                self.apple.move()
-                self.size_change()
             time.sleep(0.3)
 
 
